@@ -356,7 +356,7 @@
 			const otherRaceDiv = document.getElementById('otherRaceDiv');
 			const otherRaceInput = document.getElementById('otherRace');
 
-			document.querySelector('#race').addEventListener('change', function () {
+			document.querySelector('#vendorRace').addEventListener('change', function () {
 				const selectedOptions = Array.from(this.selectedOptions).map(opt => opt.value);
 				if (selectedOptions.includes('Other')) {
 					otherRaceDiv.classList.remove('hidden');
