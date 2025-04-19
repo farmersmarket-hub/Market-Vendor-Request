@@ -53,46 +53,67 @@
 </head>
 <body>
     <div class="glass p-6">
+		<div id="successMessage" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert"></div>
         <h2 class="text-2xl font-bold text-center mb-4 text-gray-900">Market Vendor Request Form</h2>
-        <form>
-            <div class="mb-4">
-                <label>Vendor First Name <span style='color: red;'>*</span></label>
-                <input type="text" class="w-full p-2 border rounded bg-white" required>
-            </div>
-            <div class="mb-4">
-                <label>Vendor Last Name <span style='color: red;'>*</span></label>
-                <input type="text" class="w-full p-2 border rounded bg-white" required>
-            </div>
+        <form id="marketVendorRequestForm" onsubmit="generateVendorId(event)">
             <div class="mb-4">
                 <label>Vendor Business Name <span style='color: red;'>*</span></label>
-                <input type="text" class="w-full p-2 border rounded bg-white" required>
+                <input type="text" name="vendorName" id="vendorName" class="w-full p-2 border rounded bg-white" required>
+            </div>
+            <div class="mb-4">
+                <label>Primary Contact First Name <span style='color: red;'>*</span></label>
+                <input type="text" name="primaryFirstName" id="primaryFirstName" class="w-full p-2 border rounded bg-white" required>
+            </div>
+            <div class="mb-4">
+                <label>Primary Contact Last Name <span style='color: red;'>*</span></label>
+                <input type="text" name="primaryLastName" id="primaryLastName" class="w-full p-2 border rounded bg-white" required>
+            </div>
+			<div class="mb-4">
+                <label>Secondary Contact First Name</label>
+                <input type="text" name="secondaryFirstName" id="secondaryFirstName" class="w-full p-2 border rounded bg-white">
+            </div>
+            <div class="mb-4">
+                <label>Secondary Contact Last Name</label>
+                <input type="text" name="secondaryLastName" id="secondaryLastName" class="w-full p-2 border rounded bg-white">
             </div>
             <div class="mb-4">
                 <label>Vendor Mailing Address <span style='color: red;'>*</span></label>
-                <input type="text" class="w-full p-2 border rounded bg-white" required>
+                <input type="text" name="vendorAddress" id="vendorAddress" class="w-full p-2 border rounded bg-white" required>
                 <label class="mt-2">Is this address? <span style='color: red;'>*</span></label>
-                <select class="w-full p-2 border rounded bg-white" required>
-                    <option>Residential</option>
-                    <option>Business</option>
-                    <option>Both</option>
+                <select class="w-full p-2 border rounded bg-white" name="vendorAddressType" id="vendorAddressType" required>
+                    <option value="">- Select Address Type -</option>
+                    <option value="Residential">Residential</option>
+                    <option value="Business">Business</option>
+                    <option value="Business">Both</option>
+                </select>
+            </div>
+			<div class="mb-4">
+                <label>Who is your Contractor? <span style='color: red;'>*</span></label>
+                <select id="contractor" name="contractor" class="w-full p-2 border rounded bg-white" required>
+                    <option value="">- Select -</option>
+                    <option value="REACH">REACH</option>
+                    <option value="PGL">PGL</option>
                 </select>
             </div>
             <div class="mb-4">
                 <label>Email Address <span style='color: red;'>*</span></label>
-                <input type="email" class="w-full p-2 border rounded bg-white" required>
+                <input type="email" name="emailAddress" id="emailAddress" class="w-full p-2 border rounded bg-white" required>
             </div>
-			<div class="mb-4">
+            <div class="mb-4">
                 <label>Vendor Type <span style='color: red;'>*</span></label>
-                <select id="vendorType" class="w-full p-2 border rounded bg-white" onchange="toggleVendorFields()" required>
+                <select id="vendorType" name="vendorType" class="w-full p-2 border rounded bg-white" onchange="handleVendorType()" required>
                     <option value="">- Select Vendor Type -</option>
-                    <option value="farmer">Farmer</option>
-                    <option value="hotFoodVendor">Hot Food Vendor</option>
-                    <option value="valueAddedProducer">Value Added Producer</option>
-                    <option value="entertainer">Entertainer</option>
-                    <option value="educator">Educator</option>
+                    <option value="FARM">Farmer</option>
+                    <option value="HOT">Hot Food Vendor</option>
+                    <option value="VAP">Value Added Producer</option>
+                    <option value="ENT">Entertainer</option>
+                    <option value="EDU">Educator</option>
+                    <option value="RETAIL">Non-Food Retailer (Clothing, jewelry, etc)</option>
+                    <option value="OTHER">Other</option>
                 </select>
+                <input type="text" id="vendorTypeOther" name="vendorTypeOther" class="w-full p-2 border rounded bg-white mt-2 hidden" placeholder="Please specify other vendor type">
             </div>
-<!--             <div id="farmerFields" class="hidden">
+            <!-- <div id="farmerFields" class="hidden">
                 <label>What crops will you be selling at the market? <span style='color: red;'>*</span></label>
                 <input type="text" class="w-full p-2 border rounded bg-white" required>
                 <label>On average, how much (pounds of produce) would you bring? <span style='color: red;'>*</span></label>
@@ -124,25 +145,31 @@
             </div> -->
             <div class="mb-4">
                 <label>Vendor Age <span style='color: red;'>*</span></label>
-                <input type="number" class="w-full p-2 border rounded bg-white" required>
+                <input type="number" name="vendorAge" id="vendorAge" class="w-full p-2 border rounded bg-white" required>
             </div>
             <div class="mb-4">
                 <label>Vendor Race/Ethnicity <span style='color: red;'>*</span></label>
-                <select id="vendorRace" class="w-full p-2 border rounded bg-white" required>
+                <select id="vendorRace" name="vendorRace" class="w-full p-2 border rounded bg-white" required>
                     <option value="">- Select Race -</option>
-                    <option value="Black/African-American">Black/African-American</option>
-                    <option value="White/Caucasian">White/Caucasian</option>
-                    <option value="Hispanic/Latine">Hispanic/Latine</option>
-                    <option value="Native American/Alaskan Native/Indigenous American">Native American/Alaskan Native/Indigenous American</option>
-                    <option value="Asian/Asian-American">Asian/Asian-American</option>
-					<option value="Middle Eastern/North African">Middle Eastern/North African</option>
+                    <option value="African/African-American/Black">African/African-American/Black</option>
+                    <option value="American Indian/Alaskan Native/Indigenous American">American Indian/Alaskan Native/Indigenous American</option>
+                    <option value="Caucasian/European/European-American/White">Caucasian/European/European-American/White</option>
+                    <option value="South Asian/South Asian-American">South Asian/South Asian-American</option>
+					<option value="East Asian/East Asian-American">East Asian/East Asian-American</option>
+                    <option value="Latine (Latino/a/x) or Hispanic">Latine (Latino/a/x) or Hispanic</option>
+					<option value="Native Hawaiian/Pacific Islander">Native Hawaiian/Pacific Islander</option>
+					<option value="Other">Other</option>
                 </select>
+				<div id="otherRaceDiv" class="hidden">
+					<label for="otherRace">Please specify </label>
+					<input type="text" id="otherRace" name="otherRace" placeholder="Enter other race">
+				</div>
             </div>
             <div class="mb-4">
 				<label>Vendor Nationality <span style='color: red;'>*</span>
 					<span class="text-sm text-gray-600 block">(Select all that apply — based on languages spoken in the household or nationalities primary cardholder identifies as)</span>
 				</label>
-				<select id="vendorNationality" multiple class="w-full p-2 border rounded bg-white" required>
+				<select id="vendorNationality" name="vendorNationality" multiple class="w-full p-2 border rounded bg-white" required>
 					<option value="U.S.">U.S.</option>
 					<option value="Japanese">Japanese</option>
 					<option value="Chinese">Chinese</option>
@@ -178,12 +205,12 @@
 				</select>
 				<div id="otherNationalityDiv" class="mt-3 hidden">
 					<label>Please specify <span style='color: red;'>*</span></label>
-					<input type="text" class="w-full p-2 border rounded bg-white mt-1" placeholder="Enter other nationality" required>
+					<input type="text" id="otherNationality" name="otherNationality" class="w-full p-2 border rounded bg-white mt-1" placeholder="Enter other nationality">
 				</div>
 			</div>
             <div class="mb-4">
                 <label>Vendor Organization Type <span style='color: red;'>*</span></label>
-                <select id="vendorOrgType" class="w-full p-2 border rounded bg-white" required>
+                <select id="vendorOrgType" name="vendorOrgType" class="w-full p-2 border rounded bg-white" required>
                     <option value="">- Select Organization Type -</option>
                     <option value="501c">501c</option>
                     <option value="LLC">LLC</option>
@@ -203,13 +230,32 @@
                 <input type="text" class="w-full p-2 border rounded bg-white">
             </div> -->
             <div class="mb-4">
-                <label>Upload Relevant Certification Documents <span style='color: red;'>*</span></label>
-                <input type="file" multiple class="w-full p-2 border rounded bg-white" required>
+                <label>Upload All the following Documentation <span style='color: red;'>*</span></label>
+                <ul class="text-sm text-gray-600 list-disc pl-5 mb-2">
+                    <li>Completed W9 form</li>
+                    <li>Proof of active business registry</li>
+                    <li>Proof of business insurance</li>
+                    <li>Completed vendor agreement</li>
+                    <li>Proof of business bank account / Direct deposit register</li>
+                    <li>Rental Agreement for equipment</li>
+                    <li>Farmer-Produce Agreement</li>
+                    <li>Organizations - Tabling agreement</li>
+                </ul>
+                <input type="file" id="documentUpload" name="documentUpload" multiple class="w-full p-2 border rounded bg-white" required onchange="validateFileCount()">
+                <p id="fileError" class="error-text hidden"></p>
+            </div>
+            <div class="mb-4">
+                <label>Do you have a U.S. checking or savings account to receive direct deposit? <span style='color: red;'>*</span></label>
+                <select class="w-full p-2 border rounded bg-white" name="bankAccount" id="bankAccount" required>
+                    <option value="">- Select -</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
             </div>
             <div class="mb-4">
                 <label>What is your level of English competency? <span style='color: red;'>*</span></label><br>
                 <label>Spoken English </label>
-                <select class="w-full p-2 border rounded bg-white" required>
+                <select class="w-full p-2 border rounded bg-white" name="spokenEnglish" id="spokenEnglish" required>
                     <option>Fluent</option>
                     <option>Proficient</option>
                     <option>Competent</option>
@@ -217,7 +263,7 @@
                     <option>None</option>
                 </select>
                 <label>Written English</label>
-                <select class="w-full p-2 border rounded bg-white" required>
+                <select class="w-full p-2 border rounded bg-white" name="writtenEnglish" id="writtenEnglish" required>
                     <option>Fluent</option>
                     <option>Proficient</option>
                     <option>Competent</option>
@@ -228,49 +274,209 @@
 			<div class="mb-4">
                 <label>What other languages do you speak/write at least competently? 
 				<span class="text-sm text-gray-600 block">(list all, if any)</span></label>
-                <input type="text" class="w-full p-2 border rounded bg-white">
+                <input list="languageOptions" name="otherLang" id="otherLang">
+	                <datalist id="languageOptions">
+					  <option value="Spanish">
+					  <option value="Chinese">
+					  <option value="Tagalog">
+					  <option value="Vietnamese">
+					  <option value="Arabic">
+					  <option value="French">
+					  <option value="Haitian Creole">
+					  <option value="Korean">
+					  <option value="Russian">
+					  <option value="Portuguese">
+					  <option value="Japanese">
+					  <option value="German">
+					  <option value="Somali">
+					  <option value="Swahili">
+					  <option value="Amharic">
+					  <option value="Oromo">
+					  <option value="Hindi">
+					  <option value="Urdu">
+					  <option value="Punjabi">
+					  <option value="Nepali">
+					  <option value="Bengali">
+					  <option value="Burmese">
+					  <option value="Karen">
+					  <option value="Rohingya">
+					  <option value="Navajo">
+					  <option value="Cherokee">
+					</datalist>
             </div>
             <div class="mb-4">
                 <label>Will you need to rent equipment? <span style='color: red;'>*</span>
 				<span class="text-sm text-gray-600 block">(e.g. chair, table, tent)</span></label>
-                <select class="w-full p-2 border rounded bg-white">
+                <select class="w-full p-2 border rounded bg-white" name="rentEquipment" id="rentEquipment">
 					<option value="">- Select -</option>
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
                 </select>
                 <p class="text-sm text-gray-600">If no, you are indicating that you will bring your own chair, table, and tent to each market.</p>
             </div>
-			<script>			
-				document.addEventListener('DOMContentLoaded', function () {
-					new Choices('#vendorNationality', {
-					removeItemButton: true,
-					placeholderValue: 'Select Nationality',
-					searchPlaceholderValue: 'Type to search...',
-					shouldSort: false
-					});
-					
-					const otherDiv = document.getElementById('otherNationalityDiv');
-
-					document.querySelector('#vendorNationality').addEventListener('change', function () {
-						const selectedOptions = Array.from(this.selectedOptions).map(opt => opt.value);
-						if (selectedOptions.includes('Other')) {
-							otherDiv.classList.remove('hidden');
-						} else {
-							otherDiv.classList.add('hidden');
-						}
-					});
-				});
-				
-                function toggleVendorFields() {
-                    document.querySelectorAll('.hidden').forEach(el => el.classList.add('hidden'));
-                    const selectedType = document.getElementById("vendorType").value;
-                    if (selectedType) document.getElementById(selectedType + "Fields").classList.remove("hidden");
-                }
-            </script>
+            <div class="mb-4">
+                <label>Is there any additional information that you want to share with us?</label>
+                <textarea class="w-full p-2 border rounded bg-white" name="comments" id="comments" rows="3"></textarea>
+            </div>
+			<input type="hidden" name="vendorId" id="vendorId">
+			<input type="hidden" name="individualId" id="individualId">
             <div class="text-center">
                 <button type="submit" class="submit-btn">Submit</button>
             </div>
         </form>
     </div>
+	<script>			
+		document.addEventListener('DOMContentLoaded', function () {
+			new Choices('#vendorNationality', {
+			removeItemButton: true,
+			placeholderValue: 'Select Nationality',
+			searchPlaceholderValue: 'Type to search...',
+			shouldSort: false
+			});
+			
+			const otherDiv = document.getElementById('otherNationalityDiv');
+			const otherInput = document.getElementById('otherNationality');
+
+			document.querySelector('#vendorNationality').addEventListener('change', function () {
+				const selectedOptions = Array.from(this.selectedOptions).map(opt => opt.value);
+				if (selectedOptions.includes('Other')) {
+					otherDiv.classList.remove('hidden');
+					otherInput.required = true;
+				} else {
+					otherDiv.classList.add('hidden');
+					otherInput.required = false;
+				}
+			});
+			
+			new Choices('#vendorRace', {
+				searchEnabled: true,
+				shouldSort: false
+			});
+
+			const otherRaceDiv = document.getElementById('otherRaceDiv');
+			const otherRaceInput = document.getElementById('otherRace');
+
+			document.querySelector('#race').addEventListener('change', function () {
+				const selectedOptions = Array.from(this.selectedOptions).map(opt => opt.value);
+				if (selectedOptions.includes('Other')) {
+					otherRaceDiv.classList.remove('hidden');
+					otherRaceInput.required = true;
+				} else {
+					otherRaceDiv.classList.add('hidden');
+					otherRaceInput.required = false;
+				}
+			});
+		});
+		
+		function handleVendorType() {
+		  const vendorType = document.getElementById('vendorType').value;
+		  const otherField = document.getElementById('vendorTypeOther');
+		  otherField.classList.toggle('hidden', vendorType !== 'OTHER');
+		}
+		
+		function validateFileCount() {
+		  const fileInput = document.getElementById('documentUpload');
+		  const errorMsg = document.getElementById('fileError');
+		  if (fileInput.files.length !== 8) {
+			errorMsg.textContent = "You must upload exactly 8 files to proceed.";
+			errorMsg.classList.remove('hidden');
+			fileInput.setCustomValidity("You must upload exactly 8 files.");
+		  } else {
+			errorMsg.textContent = "";
+			errorMsg.classList.add('hidden');
+			fileInput.setCustomValidity("");
+		  }
+		  fileInput.reportValidity();
+		}
+
+		function generateVendorId(e) {
+		  e.preventDefault();
+		  const contractor = document.getElementById('contractor').value;
+		  let vendorType = document.getElementById('vendorType').value;
+		  if (vendorType === 'OTHER') vendorType = 'OTHER';
+		  const individualId = Math.floor(100 + Math.random() * 900);
+		  const vendorId = `${contractor}-${vendorType}-${individualId}`;
+
+		  document.getElementById("vendorId").value = vendorId;
+		  document.getElementById("individualId").value = individualId;		  
+	
+		  const form = document.getElementById("marketVendorRequestForm");
+		  const formData = new FormData(form);				  
+					  
+		  // Get nationality properly from multiselect
+		  const nationalitySelect = document.getElementById("vendorNationality");
+		  const allNationalities = Array.from(nationalitySelect.selectedOptions).map(opt => opt.value);
+		
+		  // Update FormData to include the full list as a single string (comma separated)
+		  formData.set("vendorNationality", allNationalities.join(", "));
+		  
+		  const fileInput = document.getElementById('documentUpload');
+		  const files = fileInput.files;
+
+		  if (files.length > 0) {
+			const fileReaders = [];
+			const base64Strings = [];
+			const fileTypes = [];
+
+			for (let i = 0; i < files.length; i++) {
+			  const reader = new FileReader();
+			  reader.onload = function(e) {
+				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
+				fileTypes.push(files[i].type); // File MIME type
+				if (base64Strings.length === files.length){
+				  formData.append('fileData', JSON.stringify(base64Strings));
+				  formData.append('fileTypes', JSON.stringify(fileTypes));
+				  sendData(formData, vendorId);
+			}
+		  };
+
+		  reader.onerror = function(e) {
+				console.error("Error reading file: ", files[i].name, e);
+		  };
+
+		  reader.readAsDataURL(files[i]);
+		  }
+		  } else {
+			sendData(formData, vendorId);
+		  }
+			
+		}
+	
+		function sendData(formData, vendorid) {
+			const data = {};
+			formData.forEach((value, key) => {
+			  data[key] = value;
+			});
+			
+			let vendorId = vendorid;
+			
+			let successMessage = document.getElementById("successMessage");
+			successMessage.innerHTML = `<strong class="font-bold">Thank you!</strong> <span class="block sm:inline">Your Vendor ID is <strong>${vendorId}</strong>. We will notify you by email within 1-3 business days. If approved, you must submit all remaining documents before the market begins. If you have any questions, contact us at ######.</span>`;
+			successMessage.classList.remove('hidden');
+			  
+			document.getElementById("marketVendorRequestForm").reset();
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+
+			fetch('https://script.google.com/macros/s/AKfycbzhx4W6WFx60s1xN_rmtoX3BQ0K9HripclK_q-Tir7XAKSkWmdWNiF3JNzrNYLBptpMFg/exec', {
+			  method: 'POST',
+			  headers: {
+				'Content-Type': 'text/plain;charset=utf-8',
+			  },
+			  body: JSON.stringify(data),
+			})
+			.then(response => response.text())
+			.then(result => {
+			  console.log('Success:', result);
+									
+			  setTimeout(function() {
+				successMessage.classList.add('hidden');
+			  }, 5000);
+			})
+			.catch(error => {
+			  console.error('Error:', error);
+			  // Handle the error here
+			});                
+		}
+	</script>
 </body>
 </html>
