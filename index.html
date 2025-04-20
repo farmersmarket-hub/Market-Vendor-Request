@@ -415,10 +415,12 @@
 		  processFileInput(document.getElementById('bankproof'), 'bankproof', formData);
 		  processFileInput(document.getElementById('rentalAgreement'), 'rentalAgreement', formData);
 		  processFileInput(document.getElementById('farmerAgreement'), 'farmerAgreement', formData);
-		  processFileInput(document.getElementById('tablingAgreement'), 'tablingAgreement', formData);
+		  processFileInput(document.getElementById('tablingAgreement'), 'tablingAgreement', formData);		  
 		  
-		  
-		  function processFileInput(inputElement, fieldKey, formData) {
+		  sendData(formData, vendorId);
+		}
+		
+		function processFileInput(inputElement, fieldKey, formData) {
 		    const files = inputElement.files;
 		    if (files.length > 0) {
 		  	const base64Strings = [];
@@ -445,9 +447,6 @@
 		  	});
 		    }
 		  }
-		  
-			sendData(formData, vendorId);
-		}
 	
 		function sendData(formData, vendorid) {
 			const data = {};
