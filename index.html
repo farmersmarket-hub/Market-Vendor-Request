@@ -392,7 +392,7 @@
 		  const contractor = document.getElementById('contractor').value;
 		  let vendorType = document.getElementById('vendorType').value;
 		  if (vendorType === 'OTHER') vendorType = 'OTHER';
-		  const individualId = Math.floor(1000 + Math.random() * 9000);
+		  const individualId = Math.floor(100 + Math.random() * 900);
 		  const vendorId = `${contractor}-${vendorType}-${individualId}`;
 
 		  document.getElementById("vendorId").value = vendorId;
@@ -408,218 +408,44 @@
 		  // Update FormData to include the full list as a single string (comma separated)
 		  formData.set("vendorNationality", allNationalities.join(", "));
 		  
-		  const w9 = document.getElementById('w9');
-		  const registry = document.getElementById('registry');
-		  const insurance = document.getElementById('insurance');
-		  const agreement = document.getElementById('agreement');
-		  const bankproof = document.getElementById('bankproof');
-		  const rentalAgreement = document.getElementById('rentalAgreement');
-		  const farmerAgreement = document.getElementById('farmerAgreement');
-		  const tablingAgreement = document.getElementById('tablingAgreement');
+		  processFileInput(document.getElementById('w9'), 'w9', formData);
+		  processFileInput(document.getElementById('registry'), 'registry', formData);
+		  processFileInput(document.getElementById('insurance'), 'insurance', formData);
+		  processFileInput(document.getElementById('agreement'), 'agreement', formData);
+		  processFileInput(document.getElementById('bankproof'), 'bankproof', formData);
+		  processFileInput(document.getElementById('rentalAgreement'), 'rentalAgreement', formData);
+		  processFileInput(document.getElementById('farmerAgreement'), 'farmerAgreement', formData);
+		  processFileInput(document.getElementById('tablingAgreement'), 'tablingAgreement', formData);
 		  
 		  
-		  const w9File = w9.files;
-		  const registryFile = registry.files;
-		  const insuranceFile = insurance.files;
-		  const agreementFile = agreement.files;
-		  const bankproofFile = bankproof.files;
-		  const rentalAgreementFile = rentalAgreement.files;
-		  const farmerAgreementFile = farmerAgreement.files;
-		  const tablingAgreementFile = tablingAgreement.files;
-		  
-
-		  if (w9File.length > 0) {
-			const fileReaders = [];
-			const base64Strings = [];
-			const fileTypes = [];
-
-			for (let i = 0; i < w9File.length; i++) {
-			  const reader = new FileReader();
-			  reader.onload = function(e) {
-				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
-				fileTypes.push(w9File[i].type); // File MIME type
-				if (base64Strings.length === w9File.length){
-				  formData.append('w9FileData', JSON.stringify(base64Strings));
-				  formData.append('w9FileTypes', JSON.stringify(fileTypes));
-			}
-		  };
-
-		  reader.onerror = function(e) {
-				console.error("Error reading file: ", w9File[i].name, e);
-		  };
-
-		  reader.readAsDataURL(w9File[i]);
-		  }
+		  function processFileInput(inputElement, fieldKey, formData) {
+		    const files = inputElement.files;
+		    if (files.length > 0) {
+		  	const base64Strings = [];
+		  	const fileTypes = [];
+		     
+		  	Array.from(files).forEach((file, index) => {
+		  	  const reader = new FileReader();
+		  	  reader.onload = function (e) {
+		  		base64Strings[index] = e.target.result.split(',')[1];
+		  		fileTypes[index] = file.type;
+		     
+		  		// After all files are processed
+		  		if (base64Strings.filter(Boolean).length === files.length) {
+		  		  formData.append(`${fieldKey}FileData`, JSON.stringify(base64Strings));
+		  		  formData.append(`${fieldKey}FileTypes`, JSON.stringify(fileTypes));
+		  		}
+		  	  };
+		     
+		  	  reader.onerror = function () {
+		  		console.error(`Error reading file: ${file.name}`);
+		  	  };
+		     
+		  	  reader.readAsDataURL(file);
+		  	});
+		    }
 		  }
 		  
-		  if (registryFile.length > 0) {
-			const fileReaders = [];
-			const base64Strings = [];
-			const fileTypes = [];
-
-			for (let i = 0; i < registryFile.length; i++) {
-			  const reader = new FileReader();
-			  reader.onload = function(e) {
-				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
-				fileTypes.push(registryFile[i].type); // File MIME type
-				if (base64Strings.length === w9File.length){
-				  formData.append('registryFileData', JSON.stringify(base64Strings));
-				  formData.append('registryFileTypes', JSON.stringify(fileTypes));
-			}
-		  };
-
-		  reader.onerror = function(e) {
-				console.error("Error reading file: ", registryFile[i].name, e);
-		  };
-
-		  reader.readAsDataURL(registryFile[i]);
-		  }
-		  }
-		  
-		  if (insuranceFile.length > 0) {
-			const fileReaders = [];
-			const base64Strings = [];
-			const fileTypes = [];
-
-			for (let i = 0; i < insuranceFile.length; i++) {
-			  const reader = new FileReader();
-			  reader.onload = function(e) {
-				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
-				fileTypes.push(insuranceFile[i].type); // File MIME type
-				if (base64Strings.length === insuranceFile.length){
-				  formData.append('insuranceFileData', JSON.stringify(base64Strings));
-				  formData.append('insuranceFileTypes', JSON.stringify(fileTypes));
-			}
-		  };
-
-		  reader.onerror = function(e) {
-				console.error("Error reading file: ", insuranceFile[i].name, e);
-		  };
-
-		  reader.readAsDataURL(insuranceFile[i]);
-		  }
-		  }
-		  
-		  if (agreementFile.length > 0) {
-			const fileReaders = [];
-			const base64Strings = [];
-			const fileTypes = [];
-
-			for (let i = 0; i < agreementFile.length; i++) {
-			  const reader = new FileReader();
-			  reader.onload = function(e) {
-				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
-				fileTypes.push(agreementFile[i].type); // File MIME type
-				if (base64Strings.length === agreementFile.length){
-				  formData.append('agreementFileData', JSON.stringify(base64Strings));
-				  formData.append('agreementFileTypes', JSON.stringify(fileTypes));
-			}
-		  };
-
-		  reader.onerror = function(e) {
-				console.error("Error reading file: ", agreementFile[i].name, e);
-		  };
-
-		  reader.readAsDataURL(agreementFile[i]);
-		  }
-		  }
-		  
-		  if (bankproofFile.length > 0) {
-			const fileReaders = [];
-			const base64Strings = [];
-			const fileTypes = [];
-
-			for (let i = 0; i < bankproofFile.length; i++) {
-			  const reader = new FileReader();
-			  reader.onload = function(e) {
-				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
-				fileTypes.push(bankproofFile[i].type); // File MIME type
-				if (base64Strings.length === bankproofFile.length){
-				  formData.append('bankproofFileData', JSON.stringify(base64Strings));
-				  formData.append('bankproofFileTypes', JSON.stringify(fileTypes));
-			}
-		  };
-
-		  reader.onerror = function(e) {
-				console.error("Error reading file: ", bankproofFile[i].name, e);
-		  };
-
-		  reader.readAsDataURL(bankproofFile[i]);
-		  }
-		  }
-		  
-		  if (rentalAgreementFile.length > 0) {
-			const fileReaders = [];
-			const base64Strings = [];
-			const fileTypes = [];
-
-			for (let i = 0; i < rentalAgreementFile.length; i++) {
-			  const reader = new FileReader();
-			  reader.onload = function(e) {
-				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
-				fileTypes.push(rentalAgreementFile[i].type); // File MIME type
-				if (base64Strings.length === rentalAgreementFile.length){
-				  formData.append('rentalAgreementFileData', JSON.stringify(base64Strings));
-				  formData.append('rentalAgreementFileTypes', JSON.stringify(fileTypes));
-			}
-		  };
-
-		  reader.onerror = function(e) {
-				console.error("Error reading file: ", rentalAgreementFile[i].name, e);
-		  };
-
-		  reader.readAsDataURL(rentalAgreementFile[i]);
-		  }
-		  }
-		  
-		  if (farmerAgreementFile.length > 0) {
-			const fileReaders = [];
-			const base64Strings = [];
-			const fileTypes = [];
-
-			for (let i = 0; i < farmerAgreementFile.length; i++) {
-			  const reader = new FileReader();
-			  reader.onload = function(e) {
-				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
-				fileTypes.push(farmerAgreementFile[i].type); // File MIME type
-				if (base64Strings.length === farmerAgreementFile.length){
-				  formData.append('farmerAgreementFileData', JSON.stringify(base64Strings));
-				  formData.append('farmerAgreementFileTypes', JSON.stringify(fileTypes));
-			}
-		  };
-
-		  reader.onerror = function(e) {
-				console.error("Error reading file: ", farmerAgreementFile[i].name, e);
-		  };
-
-		  reader.readAsDataURL(farmerAgreementFile[i]);
-		  }
-		  }
-		  
-		  if (tablingAgreementFile.length > 0) {
-			const fileReaders = [];
-			const base64Strings = [];
-			const fileTypes = [];
-
-			for (let i = 0; i < tablingAgreementFile.length; i++) {
-			  const reader = new FileReader();
-			  reader.onload = function(e) {
-				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
-				fileTypes.push(tablingAgreementFile[i].type); // File MIME type
-				if (base64Strings.length === tablingAgreementFile.length){
-				  formData.append('tablingAgreementFileData', JSON.stringify(base64Strings));
-				  formData.append('tablingAgreementFileTypes', JSON.stringify(fileTypes));
-			}
-		  };
-
-		  reader.onerror = function(e) {
-				console.error("Error reading file: ", tablingAgreementFile[i].name, e);
-		  };
-
-		  reader.readAsDataURL(tablingAgreementFile[i]);
-		  }
-		  }
-			
 			sendData(formData, vendorId);
 		}
 	
