@@ -84,7 +84,7 @@
                     <option value="">- Select Address Type -</option>
                     <option value="Residential">Residential</option>
                     <option value="Business">Business</option>
-                    <option value="Both">Both</option>
+                    <option value="Business">Both</option>
                 </select>
             </div>
 			<div class="mb-4">
@@ -230,20 +230,33 @@
                 <input type="text" class="w-full p-2 border rounded bg-white">
             </div> -->
             <div class="mb-4">
-                <label>Upload All the following Documentation <span style='color: red;'>*</span></label>
-                <ul class="text-sm text-gray-600 list-disc pl-5 mb-2">
-                    <li>Completed W9 form</li>
-                    <li>Proof of active business registry</li>
-                    <li>Proof of business insurance</li>
-                    <li>Completed vendor agreement</li>
-                    <li>Proof of business bank account / Direct deposit register</li>
-                    <li>Rental Agreement for equipment</li>
-                    <li>Farmer-Produce Agreement</li>
-                    <li>Organizations - Tabling agreement</li>
-                </ul>
-                <input type="file" id="documentUpload" name="documentUpload" multiple class="w-full p-2 border rounded bg-white" required onchange="validateFileCount()">
-                <p id="fileError" class="error-text hidden"></p>
-            </div>
+			  <label class="block font-bold mb-2">Upload Required Documentation <span class='text-red-500'>*</span></label>
+
+			  <label class="block mb-1">Completed W9 Form</label>
+			  <input type="file" name="w9" required class="w-full p-2 border rounded bg-white">
+
+			  <label class="block mt-3 mb-1">Proof of Active Business Registry</label>
+			  <input type="file" name="registry" required class="w-full p-2 border rounded bg-white">
+
+			  <label class="block mt-3 mb-1">Proof of Business Insurance</label>
+			  <input type="file" name="insurance" required class="w-full p-2 border rounded bg-white">
+
+			  <label class="block mt-3 mb-1">Completed Vendor Agreement</label>
+			  <input type="file" name="agreement" required class="w-full p-2 border rounded bg-white">
+
+			  <label class="block mt-3 mb-1">Proof of Bank Account / Direct Deposit Register</label>
+			  <input type="file" name="bankproof" required class="w-full p-2 border rounded bg-white">
+
+			  <label class="block mt-3 mb-1">Rental Agreement for Equipment</label>
+			  <input type="file" name="rentalAgreement" required class="w-full p-2 border rounded bg-white">
+
+			  <label class="block mt-3 mb-1">Farmer-Produce Agreement</label>
+			  <input type="file" name="farmerAgreement" required class="w-full p-2 border rounded bg-white">
+
+			  <label class="block mt-3 mb-1">Organization Tabling Agreement</label>
+			  <input type="file" name="tablingAgreement" required class="w-full p-2 border rounded bg-white">
+			</div>
+
             <div class="mb-4">
                 <label>Do you have a U.S. checking or savings account to receive direct deposit? <span style='color: red;'>*</span></label>
                 <select class="w-full p-2 border rounded bg-white" name="bankAccount" id="bankAccount" required>
@@ -356,7 +369,7 @@
 			const otherRaceDiv = document.getElementById('otherRaceDiv');
 			const otherRaceInput = document.getElementById('otherRace');
 
-			document.querySelector('#vendorRace').addEventListener('change', function () {
+			document.querySelector('#race').addEventListener('change', function () {
 				const selectedOptions = Array.from(this.selectedOptions).map(opt => opt.value);
 				if (selectedOptions.includes('Other')) {
 					otherRaceDiv.classList.remove('hidden');
@@ -372,21 +385,6 @@
 		  const vendorType = document.getElementById('vendorType').value;
 		  const otherField = document.getElementById('vendorTypeOther');
 		  otherField.classList.toggle('hidden', vendorType !== 'OTHER');
-		}
-		
-		function validateFileCount() {
-		  const fileInput = document.getElementById('documentUpload');
-		  const errorMsg = document.getElementById('fileError');
-		  if (fileInput.files.length !== 8) {
-			errorMsg.textContent = "You must upload exactly 8 files to proceed.";
-			errorMsg.classList.remove('hidden');
-			fileInput.setCustomValidity("You must upload exactly 8 files.");
-		  } else {
-			errorMsg.textContent = "";
-			errorMsg.classList.add('hidden');
-			fileInput.setCustomValidity("");
-		  }
-		  fileInput.reportValidity();
 		}
 
 		function generateVendorId(e) {
@@ -410,36 +408,219 @@
 		  // Update FormData to include the full list as a single string (comma separated)
 		  formData.set("vendorNationality", allNationalities.join(", "));
 		  
-		  const fileInput = document.getElementById('documentUpload');
-		  const files = fileInput.files;
+		  const w9 = document.getElementById('w9');
+		  const registry = document.getElementById('registry');
+		  const insurance = document.getElementById('insurance');
+		  const agreement = document.getElementById('agreement');
+		  const bankproof = document.getElementById('bankproof');
+		  const rentalAgreement = document.getElementById('rentalAgreement');
+		  const farmerAgreement = document.getElementById('farmerAgreement');
+		  const tablingAgreement = document.getElementById('tablingAgreement');
+		  
+		  
+		  const w9File = w9.files;
+		  const registryFile = registry.files;
+		  const insuranceFile = insurance.files;
+		  const agreementFile = agreement.files;
+		  const bankproofFile = bankproof.files;
+		  const rentalAgreementFile = rentalAgreement.files;
+		  const farmerAgreementFile = farmerAgreement.files;
+		  const tablingAgreementFile = tablingAgreement.files;
+		  
 
-		  if (files.length > 0) {
+		  if (w9File.length > 0) {
 			const fileReaders = [];
 			const base64Strings = [];
 			const fileTypes = [];
 
-			for (let i = 0; i < files.length; i++) {
+			for (let i = 0; i < w9File.length; i++) {
 			  const reader = new FileReader();
 			  reader.onload = function(e) {
 				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
-				fileTypes.push(files[i].type); // File MIME type
-				if (base64Strings.length === files.length){
-				  formData.append('fileData', JSON.stringify(base64Strings));
-				  formData.append('fileTypes', JSON.stringify(fileTypes));
-				  sendData(formData, vendorId);
+				fileTypes.push(w9File[i].type); // File MIME type
+				if (base64Strings.length === w9File.length){
+				  formData.append('w9FileData', JSON.stringify(base64Strings));
+				  formData.append('w9FileTypes', JSON.stringify(fileTypes));
 			}
 		  };
 
 		  reader.onerror = function(e) {
-				console.error("Error reading file: ", files[i].name, e);
+				console.error("Error reading file: ", w9File[i].name, e);
 		  };
 
-		  reader.readAsDataURL(files[i]);
+		  reader.readAsDataURL(w9File[i]);
 		  }
-		  } else {
-			sendData(formData, vendorId);
+		  }
+		  
+		  if (registryFile.length > 0) {
+			const fileReaders = [];
+			const base64Strings = [];
+			const fileTypes = [];
+
+			for (let i = 0; i < registryFile.length; i++) {
+			  const reader = new FileReader();
+			  reader.onload = function(e) {
+				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
+				fileTypes.push(registryFile[i].type); // File MIME type
+				if (base64Strings.length === w9File.length){
+				  formData.append('registryFileData', JSON.stringify(base64Strings));
+				  formData.append('registryFileTypes', JSON.stringify(fileTypes));
+			}
+		  };
+
+		  reader.onerror = function(e) {
+				console.error("Error reading file: ", registryFile[i].name, e);
+		  };
+
+		  reader.readAsDataURL(registryFile[i]);
+		  }
+		  }
+		  
+		  if (insuranceFile.length > 0) {
+			const fileReaders = [];
+			const base64Strings = [];
+			const fileTypes = [];
+
+			for (let i = 0; i < insuranceFile.length; i++) {
+			  const reader = new FileReader();
+			  reader.onload = function(e) {
+				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
+				fileTypes.push(insuranceFile[i].type); // File MIME type
+				if (base64Strings.length === insuranceFile.length){
+				  formData.append('insuranceFileData', JSON.stringify(base64Strings));
+				  formData.append('insuranceFileTypes', JSON.stringify(fileTypes));
+			}
+		  };
+
+		  reader.onerror = function(e) {
+				console.error("Error reading file: ", insuranceFile[i].name, e);
+		  };
+
+		  reader.readAsDataURL(insuranceFile[i]);
+		  }
+		  }
+		  
+		  if (agreementFile.length > 0) {
+			const fileReaders = [];
+			const base64Strings = [];
+			const fileTypes = [];
+
+			for (let i = 0; i < agreementFile.length; i++) {
+			  const reader = new FileReader();
+			  reader.onload = function(e) {
+				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
+				fileTypes.push(agreementFile[i].type); // File MIME type
+				if (base64Strings.length === agreementFile.length){
+				  formData.append('agreementFileData', JSON.stringify(base64Strings));
+				  formData.append('agreementFileTypes', JSON.stringify(fileTypes));
+			}
+		  };
+
+		  reader.onerror = function(e) {
+				console.error("Error reading file: ", agreementFile[i].name, e);
+		  };
+
+		  reader.readAsDataURL(agreementFile[i]);
+		  }
+		  }
+		  
+		  if (bankproofFile.length > 0) {
+			const fileReaders = [];
+			const base64Strings = [];
+			const fileTypes = [];
+
+			for (let i = 0; i < bankproofFile.length; i++) {
+			  const reader = new FileReader();
+			  reader.onload = function(e) {
+				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
+				fileTypes.push(bankproofFile[i].type); // File MIME type
+				if (base64Strings.length === bankproofFile.length){
+				  formData.append('bankproofFileData', JSON.stringify(base64Strings));
+				  formData.append('bankproofFileTypes', JSON.stringify(fileTypes));
+			}
+		  };
+
+		  reader.onerror = function(e) {
+				console.error("Error reading file: ", bankproofFile[i].name, e);
+		  };
+
+		  reader.readAsDataURL(bankproofFile[i]);
+		  }
+		  }
+		  
+		  if (rentalAgreementFile.length > 0) {
+			const fileReaders = [];
+			const base64Strings = [];
+			const fileTypes = [];
+
+			for (let i = 0; i < rentalAgreementFile.length; i++) {
+			  const reader = new FileReader();
+			  reader.onload = function(e) {
+				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
+				fileTypes.push(rentalAgreementFile[i].type); // File MIME type
+				if (base64Strings.length === rentalAgreementFile.length){
+				  formData.append('rentalAgreementFileData', JSON.stringify(base64Strings));
+				  formData.append('rentalAgreementFileTypes', JSON.stringify(fileTypes));
+			}
+		  };
+
+		  reader.onerror = function(e) {
+				console.error("Error reading file: ", rentalAgreementFile[i].name, e);
+		  };
+
+		  reader.readAsDataURL(rentalAgreementFile[i]);
+		  }
+		  }
+		  
+		  if (farmerAgreementFile.length > 0) {
+			const fileReaders = [];
+			const base64Strings = [];
+			const fileTypes = [];
+
+			for (let i = 0; i < farmerAgreementFile.length; i++) {
+			  const reader = new FileReader();
+			  reader.onload = function(e) {
+				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
+				fileTypes.push(farmerAgreementFile[i].type); // File MIME type
+				if (base64Strings.length === farmerAgreementFile.length){
+				  formData.append('farmerAgreementFileData', JSON.stringify(base64Strings));
+				  formData.append('farmerAgreementFileTypes', JSON.stringify(fileTypes));
+			}
+		  };
+
+		  reader.onerror = function(e) {
+				console.error("Error reading file: ", farmerAgreementFile[i].name, e);
+		  };
+
+		  reader.readAsDataURL(farmerAgreementFile[i]);
+		  }
+		  }
+		  
+		  if (tablingAgreementFile.length > 0) {
+			const fileReaders = [];
+			const base64Strings = [];
+			const fileTypes = [];
+
+			for (let i = 0; i < tablingAgreementFile.length; i++) {
+			  const reader = new FileReader();
+			  reader.onload = function(e) {
+				base64Strings.push(e.target.result.split(',')[1]); // Base64 string
+				fileTypes.push(tablingAgreementFile[i].type); // File MIME type
+				if (base64Strings.length === tablingAgreementFile.length){
+				  formData.append('tablingAgreementFileData', JSON.stringify(base64Strings));
+				  formData.append('tablingAgreementFileTypes', JSON.stringify(fileTypes));
+			}
+		  };
+
+		  reader.onerror = function(e) {
+				console.error("Error reading file: ", tablingAgreementFile[i].name, e);
+		  };
+
+		  reader.readAsDataURL(tablingAgreementFile[i]);
+		  }
 		  }
 			
+			sendData(formData, vendorId);
 		}
 	
 		function sendData(formData, vendorid) {
@@ -457,7 +638,7 @@
 			document.getElementById("marketVendorRequestForm").reset();
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 
-			fetch('https://script.google.com/macros/s/AKfycbyvRtSrUmvyqnoYnAu8FIACiHHOKQerihhFyOo7kOW6VQU4oE99ZXgDryLScHs3n6MEkQ/exec', {
+			fetch('https://script.google.com/macros/s/AKfycbzGrcl2Rm8xhAynHKT0w8o4FEv6WKew0WWB6Z2g3dvf-uoC0-8ysuAFZYE_JTjElvjHQA/exec', {
 			  method: 'POST',
 			  headers: {
 				'Content-Type': 'text/plain;charset=utf-8',
