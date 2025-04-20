@@ -408,45 +408,54 @@
 		  // Update FormData to include the full list as a single string (comma separated)
 		  formData.set("vendorNationality", allNationalities.join(", "));
 		  
-		  processFileInput(document.getElementById('w9'), 'w9', formData);
-		  processFileInput(document.getElementById('registry'), 'registry', formData);
-		  processFileInput(document.getElementById('insurance'), 'insurance', formData);
-		  processFileInput(document.getElementById('agreement'), 'agreement', formData);
-		  processFileInput(document.getElementById('bankproof'), 'bankproof', formData);
-		  processFileInput(document.getElementById('rentalAgreement'), 'rentalAgreement', formData);
-		  processFileInput(document.getElementById('farmerAgreement'), 'farmerAgreement', formData);
-		  processFileInput(document.getElementById('tablingAgreement'), 'tablingAgreement', formData);		  
+		  // Wait for all files
+		  const filePromises = [
+			processFileInputPromise(document.getElementById('w9'), 'w9'),
+			processFileInputPromise(document.getElementById('registry'), 'registry'),
+			processFileInputPromise(document.getElementById('insurance'), 'insurance'),
+			processFileInputPromise(document.getElementById('agreement'), 'agreement'),
+			processFileInputPromise(document.getElementById('bankproof'), 'bankproof'),
+			processFileInputPromise(document.getElementById('rentalAgreement'), 'rentalAgreement'),
+			processFileInputPromise(document.getElementById('farmerAgreement'), 'farmerAgreement'),
+			processFileInputPromise(document.getElementById('tablingAgreement'), 'tablingAgreement'),
+		  ];
+
+		  Promise.all(filePromises).then(results => {
+			results.filter(Boolean).forEach(({ key, data, types }) => {
+			  formData.append(`${key}FileData`, JSON.stringify(data));
+			  formData.append(`${key}FileTypes`, JSON.stringify(types));
+			});		  
 		  
-		  sendData(formData, vendorId);
+		    sendData(formData, vendorId);
+		  });
 		}
 		
-		function processFileInput(inputElement, fieldKey, formData) {
-		    const files = inputElement.files;
-		    if (files.length > 0) {
-		  	const base64Strings = [];
-		  	const fileTypes = [];
-		     
-		  	Array.from(files).forEach((file, index) => {
-		  	  const reader = new FileReader();
-		  	  reader.onload = function (e) {
-		  		base64Strings[index] = e.target.result.split(',')[1];
-		  		fileTypes[index] = file.type;
-		     
-		  		// After all files are processed
-		  		if (base64Strings.filter(Boolean).length === files.length) {
-		  		  formData.append(`${fieldKey}FileData`, JSON.stringify(base64Strings));
-		  		  formData.append(`${fieldKey}FileTypes`, JSON.stringify(fileTypes));
-		  		}
-		  	  };
-		     
-		  	  reader.onerror = function () {
-		  		console.error(`Error reading file: ${file.name}`);
-		  	  };
-		     
-		  	  reader.readAsDataURL(file);
-		  	});
-		    }
-		  }
+		function processFileInputPromise(inputElement, fieldKey) {
+		  return new Promise((resolve) => {
+			const files = inputElement.files;
+			if (!files || files.length === 0) return resolve(null);
+
+			const base64Strings = [];
+			const fileTypes = [];
+
+			Array.from(files).forEach((file, index) => {
+			  const reader = new FileReader();
+			  reader.onload = function (e) {
+				base64Strings[index] = e.target.result.split(',')[1];
+				fileTypes[index] = file.type;
+
+				if (base64Strings.filter(Boolean).length === files.length) {
+				  resolve({ key: fieldKey, data: base64Strings, types: fileTypes });
+				}
+			  };
+			  reader.onerror = function () {
+				console.error(`Error reading file: ${file.name}`);
+				resolve(null);  // Gracefully skip error
+			  };
+			  reader.readAsDataURL(file);
+			});
+		  });
+		}
 	
 		function sendData(formData, vendorid) {
 			const data = {};
