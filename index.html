@@ -392,7 +392,7 @@
 		  const contractor = document.getElementById('contractor').value;
 		  let vendorType = document.getElementById('vendorType').value;
 		  if (vendorType === 'OTHER') vendorType = 'OTHER';
-		  const individualId = Math.floor(100 + Math.random() * 900);
+		  const individualId = Math.floor(1000 + Math.random() * 9000);
 		  const vendorId = `${contractor}-${vendorType}-${individualId}`;
 
 		  document.getElementById("vendorId").value = vendorId;
